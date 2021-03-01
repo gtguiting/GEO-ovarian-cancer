@@ -1,0 +1,20 @@
+setwd("C:/Users/HP/Desktop/")
+getwd()
+options(stringsAsFactors = F)
+# read in data 
+diff3 = read.table("GSE66957.txt",sep="\t",header=T)
+# get colors
+diff3$DEG = 'notDEG'
+diff3$DEG[diff3$logFC >1 & diff3$adj.P.Val< 0.05] = 'Up'
+diff3$DEG[diff3$logFC < -1 & diff3$adj.P.Val< 0.05] = 'Down'
+diff3$colors = factor(diff3$DEG,levels=c("Down","notDEG","Up"),
+                      labels=c("green","grey","red"))
+# draw scatter plot 
+plot(diff3$logFC, -log10(diff3$adj.P.Val), pch=16, col=as.character(diff3$colors),
+     xlab="Log2(Fold change)", ylab="-Log10(adj.P.Val)",
+     cex=0.5, main="GSE66957")
+# add cutoff lines
+abline(v=c(-1,1), h=-log10(0.05), col="black",lty = 3)
+# add text
+text(-3.5,30,"Down-regulated\ngenes", col="green", cex=1)
+text(4,30,"Up-regulated\ngenes", col="red", cex=1)
