@@ -1,0 +1,28 @@
+setwd("C:/Users/HP/Desktop/")
+getwd()
+options(stringsAsFactors = F)
+
+## read in data and generate the plots
+dat = read.table("MF.txt",header=T,sep="\t")
+
+main.title = "Molecular Function"
+
+
+dat1 = dat[c(1:10),c(2,3,4,5)]
+colnames(dat1)[3] = 'GeneRatio'
+
+
+library(Hmisc)
+library(stringr)
+dat1$Term = capitalize(str_remove(dat1$Term,"GO:.*~"))
+dat1$Term = factor(dat1$Term,levels=dat1$Term[length(dat1$Term):1])
+dat1$PValue = -log10(dat1$PValue)
+
+library(ggplot2)
+ggplot(dat1,aes(GeneRatio,Term)) +
+  geom_point(aes(size=Count,colour=PValue)) +
+  scale_colour_gradient(low="blue",high="red") + 
+  labs(colour=expression(-log[10]("P Value")),size="Gene counts",  
+       x="Gene Ratio",y="",title=main.title) +
+  theme_bw() +
+  scale_x_continuous(limits = c(0,max(dat1$GeneRatio) * 1.2)) 
